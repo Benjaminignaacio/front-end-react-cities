@@ -1,0 +1,24 @@
+/* Sidebar.css */
+.sidebar {
+    position: relative;
+  }
+  
+  .nav-item {
+    position: relative;
+  }
+  
+  .text-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .btn.btn-primary.rounded-circle {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px; /* Ajusta el tamaño del ícono si es necesario */
+  }
+  
