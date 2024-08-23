@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import config from './config'
 
 const StreetsTable = () => {
   const [streets, setStreets] = useState([]);
@@ -11,7 +12,7 @@ const StreetsTable = () => {
   }, []);
 
   const fetchStreets = () => {
-    axios.get('http://localhost:8000/api/streets')
+    axios.get(`${config.apiBaseUrl}/streets`)
       .then((response) => {
         console.log(response.data); 
         setStreets(response.data);
@@ -37,14 +38,14 @@ const StreetsTable = () => {
       cancelButtonText: 'Cancelar',
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:8000/api/streets/${streetId}`)
+        axios.delete(`${config.apiBaseUrl}/streets/${streetId}`)
           .then(() => {
             Swal.fire(
               'Eliminada!',
               'La calle ha sido eliminada.',
               'success'
             );
-            fetchStreets(); // Vuelve a cargar las calles después de la eliminación
+            fetchStreets(); 
           })
           .catch((error) => {
             Swal.fire(
@@ -58,9 +59,15 @@ const StreetsTable = () => {
     });
   };
 
-  const filteredStreets = streets.filter((street) =>
-    street.name.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredStreets = streets.filter((street) => {
+    const searchTerm = search.toLowerCase();
+    return (
+      street.name.toLowerCase().includes(searchTerm) ||
+      street.region?.name.toLowerCase().includes(searchTerm) ||
+      street.province?.name.toLowerCase().includes(searchTerm) ||
+      street.city?.name.toLowerCase().includes(searchTerm)
+    );
+  });
 
   return (
     <div className="container-fluid">
@@ -74,7 +81,7 @@ const StreetsTable = () => {
             <input
               type="text"
               className="form-control"
-              placeholder="Buscar calles..."
+              placeholder="Buscar calles, regiones, provincias o ciudades..."
               value={search}
               onChange={handleSearchChange}
             />
@@ -87,7 +94,7 @@ const StreetsTable = () => {
                   <th>Región</th>
                   <th>Provincia</th>
                   <th>Ciudad</th>
-                  <th>Acciones</th> {/* Columna para las acciones */}
+                  <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2'; 
 import { Modal } from 'react-bootstrap';
+import config from './config'
 
 const RegionsTable = () => {
   const [regions, setRegions] = useState([]);
@@ -13,7 +14,7 @@ const RegionsTable = () => {
   const [cities, setCities] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/regions')
+    axios.get(`${config.apiBaseUrl}/regions`)
       .then((response) => {
         setRegions(response.data);
       })
@@ -21,7 +22,7 @@ const RegionsTable = () => {
         console.error('Error fetching data:', error);
       });
 
-    axios.get('http://localhost:8000/api/provinces')
+    axios.get(`${config.apiBaseUrl}/provinces`)
       .then((response) => {
         setProvinces(response.data);
       })
@@ -29,7 +30,7 @@ const RegionsTable = () => {
         console.error('Error fetching provinces:', error);
       });
 
-    axios.get('http://localhost:8000/api/cities')
+    axios.get(`${config.apiBaseUrl}/cities`)
       .then((response) => {
         setCities(response.data);
       })
@@ -98,7 +99,7 @@ const RegionsTable = () => {
       }
     }
 
-    axios.post('http://localhost:8000/api/regions', newRegion)
+    axios.post(`${config.apiBaseUrl}/regions`, newRegion)
       .then((response) => {
         setRegions([...regions, response.data]);
         setNewRegion({ name: '', provinces: [] }); 
@@ -122,7 +123,7 @@ const RegionsTable = () => {
   const handleUpdateRegion = (e) => {
     e.preventDefault();
 
-    axios.put(`http://localhost:8000/api/regions/${editRegion.id}`, editRegion)
+    axios.put(`${config.apiBaseUrl}/regions/${editRegion.id}`, editRegion)
       .then((response) => {
         setRegions(regions.map((region) => region.id === response.data.id ? response.data : region));
         setEditModalShow(false);
@@ -145,7 +146,7 @@ const RegionsTable = () => {
       cancelButtonText: 'Cancelar'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`http://localhost:8000/api/regions/${regionId}`)
+        axios.delete(`${config.apiBaseUrl}/regions/${regionId}`)
           .then(() => {
             setRegions(regions.filter((region) => region.id !== regionId));
             Swal.fire('Eliminado', 'La región ha sido eliminada.', 'success');

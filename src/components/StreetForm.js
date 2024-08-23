@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import config from './config'
+
 
 const StreetForm = () => {
   const [regions, setRegions] = useState([]);
@@ -13,7 +15,7 @@ const StreetForm = () => {
   const [streetName, setStreetName] = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:8000/api/regions')
+    axios.get(`${config.apiBaseUrl}/regions`)
       .then(response => {
         if (Array.isArray(response.data)) {
           setRegions(response.data);
@@ -28,7 +30,7 @@ const StreetForm = () => {
 
   useEffect(() => {
     if (selectedRegion) {
-      axios.get(`http://localhost:8000/api/regions/${selectedRegion}/provinces`)
+      axios.get(`${config.apiBaseUrl}/regions/${selectedRegion}/provinces`)
         .then(response => {
           if (Array.isArray(response.data)) {
             setProvinces(response.data);
@@ -48,7 +50,7 @@ const StreetForm = () => {
 
   useEffect(() => {
     if (selectedProvince) {
-      axios.get(`http://localhost:8000/api/provinces/${selectedProvince}/cities`)
+      axios.get(`${config.apiBaseUrl}/provinces/${selectedProvince}/cities`)
         .then(response => {
           if (Array.isArray(response.data)) {
             setCities(response.data);
@@ -84,7 +86,7 @@ const StreetForm = () => {
       city_id: selectedCity,
     };
 
-    axios.post('http://localhost:8000/api/streets', newStreet)
+    axios.post(`${config.apiBaseUrl}/streets`, newStreet)
       .then(response => {
         Swal.fire({
           icon: 'success',
