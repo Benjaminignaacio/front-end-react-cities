@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const StreetsTable = () => {
   const [streets, setStreets] = useState([]);
   const [search, setSearch] = useState('');
 
   useEffect(() => {
+    fetchStreets();
+  }, []);
+
+  const fetchStreets = () => {
     axios.get('http://localhost:8000/api/streets')
       .then((response) => {
         console.log(response.data); 
@@ -14,10 +19,43 @@ const StreetsTable = () => {
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
-  }, []);
+  };
 
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
+  };
+
+  const handleDelete = (streetId) => {
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "Esta acción no se puede deshacer.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminarla',
+      cancelButtonText: 'Cancelar',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`http://localhost:8000/api/streets/${streetId}`)
+          .then(() => {
+            Swal.fire(
+              'Eliminada!',
+              'La calle ha sido eliminada.',
+              'success'
+            );
+            fetchStreets(); // Vuelve a cargar las calles después de la eliminación
+          })
+          .catch((error) => {
+            Swal.fire(
+              'Error',
+              'Hubo un problema al eliminar la calle.',
+              'error'
+            );
+            console.error('Error deleting street:', error);
+          });
+      }
+    });
   };
 
   const filteredStreets = streets.filter((street) =>
@@ -49,6 +87,7 @@ const StreetsTable = () => {
                   <th>Región</th>
                   <th>Provincia</th>
                   <th>Ciudad</th>
+                  <th>Acciones</th> {/* Columna para las acciones */}
                 </tr>
               </thead>
               <tbody>
@@ -58,6 +97,14 @@ const StreetsTable = () => {
                     <td>{street.region?.name || 'N/A'}</td>
                     <td>{street.province?.name || 'N/A'}</td>
                     <td>{street.city?.name || 'N/A'}</td>
+                    <td>
+                      <button 
+                        className="btn btn-danger btn-sm" 
+                        onClick={() => handleDelete(street.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

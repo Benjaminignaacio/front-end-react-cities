@@ -112,8 +112,10 @@ const StreetForm = () => {
       <div className="row">
         <div className="col-12">
           <div className="card">
+            <div className="card-header py-3">
+              <h6 className="m-0 font-weight-bold text-primary">Ingresa tus calles</h6>
+            </div>
             <div className="card-body">
-              <h1 className="card-title mb-4">Ingresa tus calles</h1>
               <form onSubmit={handleStreetSubmit}>
                 <div className="form-group">
                   <label>Región:</label>
